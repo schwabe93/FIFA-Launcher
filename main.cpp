@@ -43,7 +43,7 @@ int main()
 
     cout << "Launching 'fifaconfig.exe'... \n" << endl;
 
-    Start("origin://launchgame/Origin.OFR.50.0000462",NULL);
+    Start("origin://launchgame/Origin.OFR.50.0000781",NULL);
 
     cout << "Waiting for 'fifaconfig.exe'... \n" << endl;
 
