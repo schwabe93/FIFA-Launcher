@@ -1,0 +1,30 @@
+#define VOS_NT_WINDOWS32    0x00040004L
+#define VFT_APP                      0x00000001L
+
+A ICON MOVEABLE PURE LOADONCALL DISCARDABLE "fifalauncher.ico"
+
+1 VERSIONINFO
+FILEVERSION 1,5,0,1
+PRODUCTVERSION 1,5,0,0
+FILETYPE VFT_APP
+{
+  BLOCK "StringFileInfo"
+	 {
+		 BLOCK "040904E4"
+		 {
+			 VALUE "CompanyName", "RAMBO"
+			 VALUE "FileVersion", "1.5.0.1"
+			 VALUE "FileDescription", "FIFALauncher"
+			 VALUE "InternalName", "FIFALauncher"
+			 VALUE "LegalCopyright", "RAMBO 2016"
+			 VALUE "LegalTrademarks", "RAMBO"
+			 VALUE "OriginalFilename", "FIFALauncher"
+			 VALUE "ProductName", "FIFALauncher"
+			 VALUE "ProductVersion", "FIFA 15 Release"
+		 }
+	 }
+  BLOCK "VarFileInfo"
+	 {
+		 VALUE "Translation", 0x0409, 1252
+	 }
+}
