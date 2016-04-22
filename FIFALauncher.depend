@@ -1,0 +1,10 @@
+# depslib dependency file v1.0
+1461337612 source:c:\users\admin\documents\github\fifa-launcher\main.cpp
+	<iostream>
+	<windows.h>
+	<cstdlib>
+	<shellapi.h>
+	<tlhelp32.h>
+
+1461337612 source:c:\users\admin\documents\github\fifa-launcher\resources.rc
+
