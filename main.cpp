@@ -9,9 +9,7 @@ using namespace std;
 
 bool IsRunning(LPCSTR pName);
 void Start(LPCTSTR pName, LPCTSTR pArgs);
-void GoTo(LPCTSTR pName);
 void Kill(LPCTSTR pName);
-void PressPlay();
 
 int main()
 {
@@ -62,8 +60,19 @@ int main()
 
     cout << "Sending ENTER key to 'fifaconfig.exe'... \n" << endl;
 
-    GoTo("FIFA 15");
-    PressPlay();
+    HWND config_hwnd;
+    config_hwnd = FindWindow(NULL, "FIFA 15");
+    SetForegroundWindow(config_hwnd);
+    INPUT ip;
+    ip.type = INPUT_KEYBOARD;
+    ip.ki.wScan = 0;
+    ip.ki.time = 0;
+    ip.ki.dwExtraInfo = 0;
+    ip.ki.wVk = 0x0D;
+    ip.ki.dwFlags = 0;
+    SendInput(1, &ip, sizeof(INPUT));
+    ip.ki.dwFlags = KEYEVENTF_KEYUP;
+    SendInput(1, &ip, sizeof(INPUT));;
 
     cout << "Waiting for FIFA to launch... \n" << endl;
 
@@ -111,24 +120,6 @@ bool IsRunning(LPCSTR pName){
 
 void Start(LPCTSTR pName, LPCTSTR pArgs){
     ShellExecute(NULL,"open",pName,pArgs,NULL,SW_SHOW);
-}
-
-void GoTo(LPCTSTR pName){
-    HWND hwnd = FindWindow(NULL,pName);
-    if(hwnd){SetForegroundWindow(hwnd);}
-}
-
-void PressPlay(){
-    INPUT ip;
-    ip.type = INPUT_KEYBOARD;
-    ip.ki.wScan = 0;
-    ip.ki.time = 0;
-    ip.ki.dwExtraInfo = 0;
-    ip.ki.wVk = 0x0D;
-    ip.ki.dwFlags = 0;
-    SendInput(1, &ip, sizeof(INPUT));
-    ip.ki.dwFlags = KEYEVENTF_KEYUP;
-    SendInput(1, &ip, sizeof(INPUT));
 }
 
 void Kill(LPCTSTR pName){
