@@ -4,4 +4,4 @@ Provides a smoother launching experience by bypassing the fifaconfig window. Sup
 
 v1.5.1 Initial Release intended for FIFA 15
 
-v1.5.2 Cleaned up code and made verbose
+v1.5.2 Rearranged code and made verbose
