@@ -24,6 +24,7 @@ int main(int argc, char **argv)
     if (argv[1]==NULL){
         MessageBox(0, "Specify which game to launch: F16 or F17", "Error", MB_OK);
         return 1;}
+    //determine which version to start
     if (_stricmp(argv[1], "F15") == 0) {
         gEX = "fifa15.exe";
         gWN = "FIFA 15";
