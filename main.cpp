@@ -7,62 +7,117 @@
 
 using namespace std;
 
-bool IsRunning(LPCSTR pName);
-void Start(LPCTSTR pName, LPCTSTR pArgs);
+LPCTSTR gEX;
+LPCTSTR gWN;
+LPCTSTR oID;
+HANDLE GetHndl(LPCTSTR pName);
+int Start(LPCTSTR pName, LPCTSTR pArgs);
+bool IsRunning(LPCTSTR pName);
+void GoTo(LPCTSTR pName);
 void Kill(LPCTSTR pName);
+void PressPlay();
 
-int main()
+int main(int argc, char **argv)
 {
-    //---To run silently remove "//" from the beginning of the following line---//
-    //FreeConsole();
-
-    //---Closing Origin and relaunching as child process is required in order for Steam overlay to work---//
-    cout << "\nTerminating 'Origin.exe' if running... \n" << endl;
-
-    if (IsRunning("Origin") == true)
+    FreeConsole();
+    //Return error if no parameter is specified
+    if (argv[1]==NULL){
+        MessageBox(0, "Specify which game to launch: F16 or F17", "Error", MB_OK);
+        return 1;}
+    if (_stricmp(argv[1], "F15") == 0) {
+        gEX = "fifa15.exe";
+        gWN = "FIFA 15";
+        oID = "origin://launchgame/Origin.Origin.OFR.50.0000462";//fifa 16
+        }
+    else if (_stricmp(argv[1], "F16") == 0) {
+        gEX = "fifa16.exe";
+        gWN = "FIFA 16";
+        oID = "origin://launchgame/Origin.OFR.50.0000781";//fifa 16
+        }
+    else if (_stricmp(argv[1], "F17") == 0) {
+        gEX = "FIFA17.exe";
+        gWN = "FIFA 17";
+        oID = "origin://launchgame/Origin.OFR.50.0001057";//fifa 17
+    }
+    else {
+        MessageBox(0, "Please specify a valid parameter: F15, F16, or F17", "Error", MB_OK);
+        return 1;
+        }
+    //determine origin directory
+    LPCTSTR oDir;
+    if (argv[2]!=NULL){
+        oDir = argv[2];}
+    else oDir = "C:/PROGRA~2/Origin/Origin.exe";
+    //check if origin is running
+    if (IsRunning("Origin.exe")){
+        Kill("Origin.exe");}
+    //start origin as child program
+    if (Start(oDir,"-StartClientMinimized") <= 32){
+        MessageBox(0, "Failed to launch Origin.", "Error", MB_OK);
+        return 1;}
+    while (!IsRunning("Origin.exe")){
+        Sleep(1000);}
+    //wait for origin to go idle
+    Sleep(8000);
+    //launch game
+    Start(oID, NULL);
+    while (!IsRunning("fifaconfig.exe")){
+        Sleep(500);}
+    //go to fifaconfig.exe window and press play
+    GoTo(gWN);
+    Sleep(100);
+    PressPlay();
+    //exit if game does not start after 40s
+    for (int i = 1; i<41; i++){
+        Sleep (1000);}
+    if (!IsRunning(gEX)){
+        MessageBox(0, "Game doesn't appear to be running. Closing launcher.", "Error", MB_OK);
         Kill("Origin.exe");
+        return 1;}
+    //close fifaconfig window
+    Kill("fifaconfig.exe");
+    //wait for game to close
+    while (IsRunning(gEX)){
+        Sleep(1000);}
+    //give some time for cloud sync
+    Sleep(8000);
+    //Close Origin
+    Kill("Origin.exe");
+    return 0;
+}
 
-    cout << "Launching 'Origin.exe' as child process... \n" << endl;
+//--------------- F U N C T I O N S ---------------//
 
-    Start("C:/PROGRA~2/Origin/Origin.exe","-StartClientMinimized");
+HANDLE GetHndl(LPCTSTR pName){
+    PROCESSENTRY32 entry;
+    entry.dwSize = sizeof(PROCESSENTRY32);
+    HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
+    if (Process32First(snapshot, &entry) == TRUE){
+        while (Process32Next(snapshot, &entry) == TRUE){
+            if (_stricmp(entry.szExeFile, pName ) == 0){
+            HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, entry.th32ProcessID);
+            CloseHandle(snapshot);
+            return hProcess;}}
+    }return 0;
+}
 
-    cout << "Making sure Origin Launched... \n" << endl;
+int Start(LPCTSTR pName, LPCTSTR pArgs){
+    HINSTANCE h = ShellExecute(NULL,"open",pName,pArgs,NULL,SW_SHOW);
+    int r = (int) h;
+    return r;
+}
 
-    for (int i = 50; IsRunning("Origin") == false; i--)
-    {
-        Sleep(500);
-        if ( i == 0 )
-        {
-            cout << "Timed out." << endl;
-            Sleep (3000);
-            return 0;
-        }
-    }
+bool IsRunning(LPCTSTR pName){
+    if (GetHndl(pName)==0)
+        return 0;
+    return 1;
+}
+void GoTo(LPCTSTR pName){
+    HWND hwnd = FindWindow(NULL,pName);
+    if(hwnd){SetForegroundWindow(hwnd);}
+}
 
-    Sleep(7000); //<---Adjust depending on how long it takes your PC to launch origin.---//
-
-    cout << "Launching 'fifaconfig.exe'... \n" << endl;
-
-    Start("origin://launchgame/Origin.OFR.50.0000781",NULL);
-
-    cout << "Waiting for 'fifaconfig.exe'... \n" << endl;
-
-    for (int i = 50; IsRunning("FIFA 16") == false; i--)
-    {
-        Sleep(500);
-        if ( i == 0 )
-        {
-            cout << "Timed out." << endl;
-            Sleep (3000);
-            return 0;
-        }
-    }
-
-    cout << "Sending ENTER key to 'fifaconfig.exe'... \n" << endl;
-
-    HWND config_hwnd;
-    config_hwnd = FindWindow(NULL, "FIFA 16");
-    SetForegroundWindow(config_hwnd);
+void PressPlay(){
     INPUT ip;
     ip.type = INPUT_KEYBOARD;
     ip.ki.wScan = 0;
@@ -73,58 +128,10 @@ int main()
     SendInput(1, &ip, sizeof(INPUT));
     ip.ki.dwFlags = KEYEVENTF_KEYUP;
     SendInput(1, &ip, sizeof(INPUT));
-
-    cout << "Waiting 10 seconds to close 'fifaconfig.exe'... \n" << endl;
-
-    Sleep(10000);
-
-    cout << "Closing 'fifaconfig.exe'... \n" << endl;
-
-    DWORD config_pid;
-    GetWindowThreadProcessId(config_hwnd, &config_pid);
-    HANDLE config_hndl;
-    config_hndl = OpenProcess(PROCESS_ALL_ACCESS, FALSE, config_pid);
-    TerminateProcess(config_hndl, 0);
-
-    cout << "Waiting for FIFA to close... \n" << endl;
-
-    while (IsRunning("FIFA 16")){
-        Sleep(500);
-    }
-
-    cout << "Waiting 5 seconds to close Origin... \n" << endl;
-
-    Sleep(5000);
-
-    Kill("Origin.exe");
-
-    cout << "All Done" << endl;
-
-    return 0;
-}
-
-/*--------------- F U N C T I O N S ---------------*/
-
-bool IsRunning(LPCSTR pName){
-    HWND hwnd;
-    hwnd = FindWindow(NULL,pName);
-    if (hwnd != 0)
-        return true;
-        else return false;
-}
-
-void Start(LPCTSTR pName, LPCTSTR pArgs){
-    ShellExecute(NULL,"open",pName,pArgs,NULL,SW_SHOW);
 }
 
 void Kill(LPCTSTR pName){
-    PROCESSENTRY32 entry;
-    entry.dwSize = sizeof(PROCESSENTRY32);
-    HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
-    if (Process32First(snapshot, &entry) == TRUE){
-        while (Process32Next(snapshot, &entry) == TRUE){
-            if (stricmp(entry.szExeFile, pName ) == 0){
-            HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, entry.th32ProcessID);
-            TerminateProcess(hProcess, 0 );}}
-    }CloseHandle(snapshot);
+    HANDLE hProcess = GetHndl(pName);
+    TerminateProcess(hProcess, 0 );
 }
+
