@@ -2,12 +2,13 @@ v2.0.0
 ------
 - Rewrote entire program from scratch
 - Now supports Fifa 15, 16, and 17
+Legacy Versions
+---------------
+-v1.6.1 FIFA 16 Release
 
-v1.6.1 FIFA 16 Release
+-v1.5.2 Rearranged code and made verbose
 
-v1.5.2 Rearranged code and made verbose
-
-v1.5.1 Initial Release intended for FIFA 15
+-v1.5.1 Initial Release intended for FIFA 15
 
 Description
 -----------
