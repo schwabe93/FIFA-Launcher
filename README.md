@@ -11,7 +11,7 @@ v1.5.1 Initial Release intended for FIFA 15
 
 Description
 -----------
-- Seemlessly launches Fifa
+- Seamlessly launches FIFA
 
 - Intended to be added to Steam as a Non-Steam game
 
