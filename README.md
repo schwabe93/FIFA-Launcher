@@ -28,7 +28,7 @@ Instructions
 
 4. Right-click the shortcut in your Steam library and click Properties
 
-5. Rename from "FIFA-Launcher-V2" to "Fifa 17" or which ever fifa you will be using
+5. Rename from "FIFA-Launcher-V2" to "FIFA 17" or which ever FIFA you will be using
 
 6. Under Target add one of the following arguments seperated by a space:
 	```
@@ -38,7 +38,7 @@ Instructions
 	
 	Example: "G:\OriginLibrary\FIFA-Launcher-V2.exe" F17
 	```
-7. All Done. Launching the shortcut will launch the respective Fifa game.
+7. All Done. Launching the shortcut will launch the respective FIFA game.
 
 Other Notes
 -----------
